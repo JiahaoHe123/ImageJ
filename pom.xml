@@ -84,20 +84,20 @@
 		<license.licenseName>N/A</license.licenseName>
 		<license.copyrightOwners>N/A</license.copyrightOwners>
 
-		<scijava.jvm.version>6</scijava.jvm.version>
+		<scijava.jvm.version>8</scijava.jvm.version>
 		<scijava.jvm.build.version>[9,)</scijava.jvm.build.version>
 		<javac.path>${java.home}/../lib/tools.jar</javac.path>
 
 		<!-- HACK: Work around usage of Java-7-specific JList code. -->
-		<maven.compiler.source>9</maven.compiler.source>
-		<maven.compiler.target>6</maven.compiler.target>
-		<maven.compiler.release></maven.compiler.release>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+<!--		<maven.compiler.release></maven.compiler.release>-->
 
 		<!-- HACK: Work around 'String index out of bounds' javadoc error. -->
 		<maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
 
 		<!-- TEMP: Until unit tests errors are all resolved. -->
-		<maven.test.skip>true</maven.test.skip>
+<!--		<maven.test.skip>true</maven.test.skip>-->
 	</properties>
 
 	<dependencies>
@@ -174,10 +174,10 @@
 				<configuration>
 					<!-- jdkToolchain required when JAVA_HOME is JDK 9 or above -->
 					<jdkToolchain>
-						<version>[1.6,8)</version>
+						<version>[1.8,8)</version>
 					</jdkToolchain>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
