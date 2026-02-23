@@ -1,7 +1,9 @@
 package ij.plugin.frame;
 
 import static org.junit.Assert.*;
+import java.awt.GraphicsEnvironment;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +18,8 @@ public class RecorderFSMTest {
 
     @Before
     public void setUp() {
+        Assume.assumeFalse("Recorder tests require a display (skip in headless CI)",
+                GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadless());
         if (Recorder.getInstance() != null) {
             Recorder.getInstance().close();
         }
