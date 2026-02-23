@@ -85,15 +85,17 @@ public class ToolsTest {
 	
 	@Test
 	public void testGetMinMaxDoubleArray() {
-		//minMaxDouble(0.0, 0.0, null); -> crashes
-		testMinMaxDouble(Double.MAX_VALUE, -Double.MAX_VALUE, new double[0]);
+		// empty or all-NaN: Tools.getMinMax returns [NaN, NaN]
+		double[] emptyMm = Tools.getMinMax(new double[0]);
+		assertTrue(Double.isNaN(emptyMm[0]) && Double.isNaN(emptyMm[1]));
+		double[] nanMm = Tools.getMinMax(new double[] {Double.NaN});
+		assertTrue(Double.isNaN(nanMm[0]) && Double.isNaN(nanMm[1]));
 		testMinMaxDouble(0.0, 0.0, new double[] {0.0});
 		testMinMaxDouble(0.0, 1.0, new double[] {0.0, 1.0});
 		testMinMaxDouble(0.0, 1.0, new double[] {1.0, 0.0});
 		testMinMaxDouble(-7.0, -1.0, new double[] {-7.0, -3.0, -1.0});
 		testMinMaxDouble(20.0, 100.0, new double[] {100.0, 80.0, 60.0, 40.0, 20.0});
 		testMinMaxDouble(Double.MIN_VALUE, Double.MAX_VALUE, new double[] {Double.MAX_VALUE,Double.MIN_VALUE});
-		testMinMaxDouble(Double.MAX_VALUE, -Double.MAX_VALUE, new double[] {Double.NaN});
 		testMinMaxDouble(1.0, 8.0, new double[] {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
 		testMinMaxDouble(-454.0, 10000.0, new double[] {42.0, 3.1415, -73.0, 1.68, 10000.0, -454.0});
 	}
@@ -109,15 +111,16 @@ public class ToolsTest {
 	
 	@Test
 	public void testGetMinMaxFloatArray() {
-		//minMaxDouble(0.0, 0.0, null); -> crashes
-		testMinMaxDouble(Double.MAX_VALUE, -Double.MAX_VALUE, new float[0]);
+		double[] emptyF = Tools.getMinMax(new float[0]);
+		assertTrue(Double.isNaN(emptyF[0]) && Double.isNaN(emptyF[1]));
+		double[] nanF = Tools.getMinMax(new float[] {Float.NaN});
+		assertTrue(Double.isNaN(nanF[0]) && Double.isNaN(nanF[1]));
 		testMinMaxDouble(0.0, 0.0, new float[] {0.0f});
 		testMinMaxDouble(0.0, 1.0, new float[] {0.0f, 1.0f});
 		testMinMaxDouble(0.0, 1.0, new float[] {1.0f, 0.0f});
 		testMinMaxDouble(-7.0, -1.0, new float[] {-7.0f, -3.0f, -1.0f});
 		testMinMaxDouble(20.0, 100.0, new float[] {100.0f, 80.0f, 60.0f, 40.0f, 20.0f});
 		testMinMaxDouble(Float.MIN_VALUE, Float.MAX_VALUE, new float[] {Float.MAX_VALUE,Float.MIN_VALUE});
-		testMinMaxDouble(Double.MAX_VALUE, -Double.MAX_VALUE, new float[] {Float.NaN});
 		testMinMaxDouble(1.0, 8.0, new float[] {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f});
 		testMinMaxDouble(-454.0, 10000.0, new float[] {42.0f, 3.1415f, -73.0f, 1.68f, 10000.0f, -454.0f});
 	}

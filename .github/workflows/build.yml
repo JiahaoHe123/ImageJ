@@ -24,7 +24,7 @@ jobs:
           cache: 'maven'
       - name: Set up CI environment
         run: .github/setup.sh
-      - name: Execute the build
+      - name: Build and test (Maven compile, test, install)
         run: .github/build.sh
         env:
           GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}

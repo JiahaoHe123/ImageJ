@@ -34,6 +34,7 @@ public class ShortProcessorTest {
 		public static void runBeforeClass() throws IOException
 		{
 		    String id = DataConstants.DATA_DIR + "CardioShort.raw";
+		    org.junit.Assume.assumeTrue("Missing test data: " + id, new java.io.File(id).exists());
 		    width = 1000;
 		    height = 1000;
 

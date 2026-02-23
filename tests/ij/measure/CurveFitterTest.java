@@ -703,7 +703,7 @@ public class CurveFitterTest {
 	public void testGetIterations() {
 		// simply a getter - nothing to test - put in place code for compile time check
 		xs = new double[] {1,2,3,4,5,6,7};
-		ys = new double[] {4,6,8,10,12,14};
+		ys = new double[] {4,6,8,10,12,14,16};
 		cf = new CurveFitter(xs,ys);
 		cf.getIterations();
 	}
@@ -712,7 +712,7 @@ public class CurveFitterTest {
 	public void testSetAndGetMaxIterations() {
 		int tmp;
 		xs = new double[] {1,2,3,4,5,6,7};
-		ys = new double[] {4,6,8,10,12,14};
+		ys = new double[] {4,6,8,10,12,14,16};
 		cf = new CurveFitter(xs,ys);
 		tmp = cf.getMaxIterations();
 		cf.setMaxIterations(tmp+500);
@@ -723,7 +723,7 @@ public class CurveFitterTest {
 	public void testSetAndGetRestarts() {
 		int tmp;
 		xs = new double[] {1,2,3,4,5,6,7};
-		ys = new double[] {4,6,8,10,12,14};
+		ys = new double[] {4,6,8,10,12,14,16};
 		cf = new CurveFitter(xs,ys);
 		tmp = cf.getRestarts();
 		cf.setRestarts(tmp+500);

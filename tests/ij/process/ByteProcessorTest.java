@@ -16,8 +16,10 @@ import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
+import java.io.File;
 import java.util.Random;
 
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -40,6 +42,7 @@ public class ByteProcessorTest {
 	public static void runBeforeClass()
 	{
 		String id = DataConstants.DATA_DIR + "head8bit.tif";
+		Assume.assumeTrue("Missing test data: " + id, new File(id).exists());
 		ImagePlus imp = new Opener().openImage(id);
 		width = imp.getWidth();
 		height = imp.getHeight();

@@ -40,6 +40,7 @@ public class FloatProcessorTest {
 	public static void runBeforeClass()
 	{
 		String id = DataConstants.DATA_DIR + "head.tif";
+		org.junit.Assume.assumeTrue("Missing test data: " + id, new java.io.File(id).exists());
 		ImagePlus imp = new Opener().openImage(id);
 		imageFloatData = imp.getProcessor().getFloatArray();
 		combined = new float[2][imp.getWidth() * imp.getHeight()];

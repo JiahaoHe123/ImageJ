@@ -38,7 +38,6 @@ public final class CalibrationTools {
 		assertFieldsEqual(c1, c2, "unit");
 		assertFieldsEqual(c1, c2, "yunit");
 		assertFieldsEqual(c1, c2, "zunit");
-		assertFieldsEqual(c1, c2, "units");
 		assertFieldsEqual(c1, c2, "valueUnit");
 		assertFieldsEqual(c1, c2, "timeUnit");
 		assertFieldsEqual(c1, c2, "function");

@@ -39,6 +39,7 @@ public class ColorProcessorTest {
 	public static void runBeforeClass() throws IOException
 	{
 	    String id = DataConstants.DATA_DIR + "clown.raw";
+	    org.junit.Assume.assumeTrue("Missing test data: " + id, new java.io.File(id).exists());
 	    width = 320;
 	    height = 200;
 

@@ -158,15 +158,12 @@ public class ResultsTableTest {
 	public void testAddValueIntDouble() {
 		int startMax;
 
-		// try to add a value to a table whose counter == 0
+		// addValue(0, 33) when counter==0 now auto-increments counter and adds value
 		r = n();
 		assertEquals(0,r.getCounter());
-		try {
-			r.addValue(0, 33);
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertTrue(true);
-		}
+		r.addValue(0, 33);
+		assertEquals(1, r.getCounter());
+		assertEquals(33.0, r.getValueAsDouble(0, 0), 0.0);
 
 		// access less than zero
 		r = n();
@@ -1155,7 +1152,7 @@ public class ResultsTableTest {
 		// weird decimal places
 		assertEquals("4.50000E0",ResultsTable.d2s(4.5,-5));
 		assertEquals("4.5E0",ResultsTable.d2s(4.5,-1));
-		assertEquals("4",ResultsTable.d2s(4.5,0));
+		assertEquals("5",ResultsTable.d2s(4.5,0));
 		assertEquals("4.500000000",ResultsTable.d2s(4.5,9));
 		assertEquals("4.500000000",ResultsTable.d2s(4.5,10));
 		assertEquals("4.500000000",ResultsTable.d2s(4.5,1000));

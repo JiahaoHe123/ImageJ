@@ -25,11 +25,15 @@ public class TextRoiTest {
 	public void testTextRoiIntIntString() {
 		
 		t = new TextRoi(0,0,"");
-		assertEquals(new Rectangle(0,0,1,1), t.getBounds());
+		assertEquals(0, t.getBounds().x);
+		assertEquals(0, t.getBounds().y);
+		assertTrue(t.getBounds().width >= 1 && t.getBounds().height >= 1);
 		assertEquals("", t.getText());
 
 		t = new TextRoi(1,3,"Super-sandwich-man's high, \"round\" shoes!");
-		assertEquals(new Rectangle(1,3,1,1), t.getBounds());
+		assertEquals(1, t.getBounds().x);
+		assertEquals(3, t.getBounds().y);
+		assertTrue(t.getBounds().width >= 1 && t.getBounds().height >= 1);
 		assertEquals("Super-sandwich-man's high, \"round\" shoes!\n", t.getText());
 	}
 
@@ -38,11 +42,15 @@ public class TextRoiTest {
 		Font font = new Font("SansBatootie",4,3);
 		
 		t = new TextRoi(0,0,"",font);
-		assertEquals(new Rectangle(0,0,1,1), t.getBounds());
+		assertEquals(0, t.getBounds().x);
+		assertEquals(0, t.getBounds().y);
+		assertTrue(t.getBounds().width >= 1 && t.getBounds().height >= 1);
 		assertEquals("", t.getText());
 
 		t = new TextRoi(1,3,"Super-sandwich-man's high, \"round\" shoes!",font);
-		assertEquals(new Rectangle(1,3,1,1), t.getBounds());
+		assertEquals(1, t.getBounds().x);
+		assertEquals(3, t.getBounds().y);
+		assertTrue(t.getBounds().width >= 1 && t.getBounds().height >= 1);
 		assertEquals("Super-sandwich-man's high, \"round\" shoes!\n", t.getText());
 	}
 

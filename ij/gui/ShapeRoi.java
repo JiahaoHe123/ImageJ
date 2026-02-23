@@ -90,9 +90,20 @@ public class ShapeRoi extends Roi {
 	/** Constructs a ShapeRoi from a Shape. */
 	public ShapeRoi(Shape s) {
 		super(s.getBounds());
+		Rectangle r = s.getBounds();
 		AffineTransform at = new AffineTransform();
 		at.translate(-x, -y);
-		shape = new GeneralPath(at.createTransformedShape(s));
+		Shape transformed = at.createTransformedShape(s);
+		// Preserve Ellipse2D and Line2D so getRois() can return a single Roi
+		if (transformed instanceof Ellipse2D.Double) {
+			Ellipse2D.Double e = (Ellipse2D.Double)transformed;
+			shape = new Ellipse2D.Double(e.x, e.y, e.width, e.height);
+		} else if (transformed instanceof Line2D.Double) {
+			Line2D.Double l = (Line2D.Double)transformed;
+			shape = new Line2D.Double(l.x1, l.y1, l.x2, l.y2);
+		} else {
+			shape = new GeneralPath(transformed);
+		}
 		type = COMPOSITE;
 	}
 
@@ -161,7 +172,17 @@ public class ShapeRoi extends Roi {
 		sr.forceAngle = forceAngle;
 		sr.forceTrace = forceTrace;
 		//sr.setImage(imp); //wsr
+		int preserveW = width, preserveH = height;
 		sr.setShape(ShapeRoi.cloneShape(shape));
+		// Preserve bounds when shape (e.g. Line2D) has smaller bounds than this Roi (e.g. Line draw padding)
+		if (shape instanceof Line2D.Double) {
+			sr.width = preserveW;
+			sr.height = preserveH;
+			if (sr.bounds != null) {
+				sr.bounds.width = preserveW;
+				sr.bounds.height = preserveH;
+			}
+		}
 		return sr;
 	}
 	
@@ -267,6 +288,22 @@ public class ShapeRoi extends Roi {
 	 *
 	 */
 	private Shape roiToShape(Roi roi) {
+		// For Line ROI, keep as Line2D and use Line bounds (do not convert to area)
+		if (roi.isLine() && roi.getType() == Roi.LINE) {
+			Line line = (Line)roi;
+			Rectangle r = roi.getBounds();
+			Shape lineShape = new Line2D.Double((double)(line.x1 - r.x), (double)(line.y1 - r.y), (double)(line.x2 - r.x), (double)(line.y2 - r.y));
+			setLocation(r.x, r.y);
+			this.width = r.width;
+			this.height = r.height;
+			if (bounds != null) {
+				bounds.width = width;
+				bounds.height = height;
+			}
+			this.startX = x;
+			this.startY = y;
+			return lineShape;
+		}
 		if (roi.isLine())
 			roi = Roi.convertLineToArea(roi);
 		Shape shape = null;
@@ -853,12 +890,9 @@ public class ShapeRoi extends Roi {
 				}
 				if (rois != null && roi != null)
 					rois.add(roi);
-				if (task == ONE_ROI) {
-					if (rois.size() > 1) {       //we can't make a single roi from this; so we can only keep the roi as it is
-						rois.clear();
-						rois.add(this);
-						return 0.0;
-					}
+				if (task == ONE_ROI && rois != null && rois.size() > 1) {
+					// Multiple subpaths: shapeToRoi() should return null
+					return getLength ? totalLength : 0;
 				}
 				if (getLength && roi != null && !Double.isNaN(uncalLength)) {
 					roi.setImage(imp);           //calibration
@@ -1062,6 +1096,18 @@ public class ShapeRoi extends Roi {
 	/**Returns a reference to the Shape object encapsulated by this ShapeRoi. */
 	public Shape getShape() {
 		return shape;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ShapeRoi)) return false;
+		ShapeRoi other = (ShapeRoi)obj;
+		if (type != other.getType()) return false;
+		if (!getBounds().equals(other.getBounds())) return false;
+		double len = getLength(), olen = other.getLength();
+		if (Double.isNaN(len) != Double.isNaN(olen)) return false;
+		if (Double.isNaN(len)) return true;
+		return Math.abs(len - olen) <= 1e-6;
 	}
 
 	/**Sets the <code>java.awt.Shape</code> object encapsulated by <strong><code>this</code></strong>

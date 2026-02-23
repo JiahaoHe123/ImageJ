@@ -5,7 +5,9 @@ import ij.ImagePlus;
 import ij.io.Opener;
 
 import java.awt.image.ColorModel;
+import java.io.File;
 
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -28,6 +30,7 @@ public class BinaryProcessorTest {
   public static void runBeforeClass()
   {
     String id = DataConstants.DATA_DIR + "head8bit.tif";
+    Assume.assumeTrue("Missing test data: " + id, new File(id).exists());
     ImagePlus imp = new Opener().openImage(id);
     width = imp.getWidth();
     height = imp.getHeight();
