@@ -23,9 +23,9 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
       - name: Set up CI environment
-        run: .github/setup.sh
+        run: bash .github/setup.sh
       - name: Build and test (Maven compile, test, install)
-        run: .github/build.sh
+        run: bash .github/build.sh
         env:
           GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
