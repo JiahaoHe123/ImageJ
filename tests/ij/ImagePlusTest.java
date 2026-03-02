@@ -2831,7 +2831,9 @@ public class ImagePlusTest {
 		//ImagePlus ip2;
 		Calibration cal;
 		String str;
-
+		int savedMeasurements = ij.plugin.filter.Analyzer.getMeasurements();
+		ij.plugin.filter.Analyzer.setMeasurements(savedMeasurements & ~Measurements.INVERT_Y);
+		try {
 		// if properties FHT
 
 		//    cal unscaled
@@ -2911,6 +2913,11 @@ public class ImagePlusTest {
 
 		//    hyperstack
 		//      note - can't test - only changes hyperstack currently being displayed
+		} finally {
+			ij.plugin.filter.Analyzer.setMeasurements(savedMeasurements);
+			IJ.setKeyUp(KeyEvent.VK_ALT);
+		}
+
 	}
 
 	@Test
