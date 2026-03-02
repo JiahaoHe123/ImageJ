@@ -52,6 +52,19 @@ public class ExecuterTest {
 		}
 	}
 
+	private class StubbedExecuter extends Executer {
+		String receivedCommand;
+
+		StubbedExecuter(String cmd) {
+			super(cmd);
+		}
+
+		@Override
+		void runCommand(String cmd) {
+			receivedCommand = cmd;
+		}
+	}
+
 	@Test
 	public void testExecuterStringImagePlus() {
 		ImagePlus ignored = null;
@@ -188,6 +201,15 @@ public class ExecuterTest {
 	public void testRemoveCommandListener() {
 		// note - can't test. See previous method's explanation. I'm invoking it above but no way to test if it
 		//   actually works.
+	}
+
+	@Test
+	public void testRunUsesStubbedRunCommandInsteadOfRealImplementation() {
+		StubbedExecuter stubbedExecuter = new StubbedExecuter("Help");
+		assertNull(stubbedExecuter.receivedCommand);
+		stubbedExecuter.run();
+		assertNotNull(stubbedExecuter.receivedCommand);
+		assertEquals("Help", stubbedExecuter.receivedCommand);
 	}
 
 }
