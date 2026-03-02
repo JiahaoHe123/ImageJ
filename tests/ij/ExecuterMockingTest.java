@@ -13,9 +13,15 @@ public class ExecuterMockingTest {
 
     @Test
     public void openRecentCallsIJOpenExactlyOnceWhenMenuContainsCmd() {
-        Menu recent = new Menu("Open Recent");
-        recent.add(new MenuItem("a.tif"));
-        recent.add(new MenuItem("b.tif"));
+        Menu recent = mock(Menu.class);
+        MenuItem itemA = mock(MenuItem.class);
+        MenuItem itemB = mock(MenuItem.class);
+
+        when(recent.getItemCount()).thenReturn(2);
+        when(recent.getItem(0)).thenReturn(itemA);
+        when(recent.getItem(1)).thenReturn(itemB);
+        when(itemA.getLabel()).thenReturn("a.tif");
+        when(itemB.getLabel()).thenReturn("b.tif");
 
         Executer ex = new Executer("ignored");
 
@@ -35,8 +41,12 @@ public class ExecuterMockingTest {
 
     @Test
     public void openRecentNeverCallsIJOpenWhenCmdMissing() {
-        Menu recent = new Menu("Open Recent");
-        recent.add(new MenuItem("a.tif"));
+        Menu recent = mock(Menu.class);
+        MenuItem itemA = mock(MenuItem.class);
+
+        when(recent.getItemCount()).thenReturn(1);
+        when(recent.getItem(0)).thenReturn(itemA);
+        when(itemA.getLabel()).thenReturn("a.tif");
 
         Executer ex = new Executer("ignored");
 
@@ -72,9 +82,15 @@ public class ExecuterMockingTest {
 
     @Test
     public void openRecentCallsGetOpenRecentMenuTwiceWhenInvokedTwice() {
-        Menu recent = new Menu("Open Recent");
-        recent.add(new MenuItem("a.tif"));
-        recent.add(new MenuItem("b.tif"));
+        Menu recent = mock(Menu.class);
+        MenuItem itemA = mock(MenuItem.class);
+        MenuItem itemB = mock(MenuItem.class);
+
+        when(recent.getItemCount()).thenReturn(2);
+        when(recent.getItem(0)).thenReturn(itemA);
+        when(recent.getItem(1)).thenReturn(itemB);
+        when(itemA.getLabel()).thenReturn("a.tif");
+        when(itemB.getLabel()).thenReturn("b.tif");
 
         Executer ex = new Executer("ignored");
 
@@ -87,7 +103,6 @@ public class ExecuterMockingTest {
             assertTrue(ex.openRecent("b.tif"));
 
             menusMock.verify(Menus::getOpenRecentMenu, times(2));
-
             ijMock.verify(() -> IJ.open("a.tif"), times(1));
             ijMock.verify(() -> IJ.open("b.tif"), times(1));
             ijMock.verifyNoMoreInteractions();
