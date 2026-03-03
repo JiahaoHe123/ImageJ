@@ -133,12 +133,16 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		PGM, GIF or JPRG specified by a path or from a TIFF, DICOM,
 		GIF or JPEG specified by a URL. */
     public ImagePlus(String pathOrURL) {
+		// BAD: hardcoded dependency, cannot be mocked in tests
     	Opener opener = new Opener();
     	ImagePlus imp = null;
+		// BAD: branching logic in constructor, cannot be tested in isolation
     	boolean isURL = pathOrURL.indexOf("://")>0;
     	if (isURL)
+			// BAD: real network call, slow and nondeterministic
     		imp = opener.openURL(pathOrURL);
     	else
+			// BAD: real file I/O, requires actual files on disk
     		imp = opener.openImage(pathOrURL);
     	if (imp!=null) {
     		if (imp.getStackSize()>1)
@@ -156,6 +160,42 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
    			setID();
     	}
     }
+
+	/** Constructs an ImagePlus from a path or URL using a provided Opener.
+	 Improves testability in three ways:
+	 1. Opener is injected instead of hardcoded with new Opener()
+	 2. Heavy loading logic is extracted into loadFromImagePlus()
+	 3. loadFromImagePlus() is protected so it can be overridden in tests */
+	public ImagePlus(String pathOrURL, Opener opener) {
+		ImagePlus imp = null;
+		boolean isURL = pathOrURL.indexOf("://") > 0;
+		if (isURL)
+			imp = opener.openURL(pathOrURL);
+		else
+			imp = opener.openImage(pathOrURL);
+		if (imp != null) {
+			loadFromImagePlus(imp, isURL ? pathOrURL : null);
+		}
+	}
+
+	/** Applies the loaded image data to this ImagePlus.
+	 Extracted from the constructor to keep it lightweight and testable.
+	 Protected so subclasses can override it in tests. */
+	protected void loadFromImagePlus(ImagePlus imp, String url) {
+		if (imp.getStackSize() > 1)
+			setStack(imp.getTitle(), imp.getStack());
+		else
+			setProcessor(imp.getTitle(), imp.getProcessor());
+		setCalibration(imp.getCalibration());
+		properties = imp.getProperties();
+		setFileInfo(imp.getOriginalFileInfo());
+		setDimensions(imp.getNChannels(), imp.getNSlices(), imp.getNFrames());
+		setOverlay(imp.getOverlay());
+		setRoi(imp.getRoi());
+		if (url != null)
+			this.url = url;
+		setID();
+	}
 
 	/** Constructs an ImagePlus from a stack. */
     public ImagePlus(String title, ImageStack stack) {
