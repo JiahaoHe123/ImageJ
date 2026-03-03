@@ -29,6 +29,13 @@ a list ImageProcessors of same type and size.
 
 public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 
+
+	/** Interface for testability: allows image loading to be mocked in tests */
+	public interface ImageLoader {
+		ImagePlus openImage(String path);
+		ImagePlus openURL(String url);
+	}
+
 	/** 8-bit grayscale (unsigned)*/
 	public static final int GRAY8 = 0;
 
@@ -173,6 +180,19 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 			imp = opener.openURL(pathOrURL);
 		else
 			imp = opener.openImage(pathOrURL);
+		if (imp != null) {
+			loadFromImagePlus(imp, isURL ? pathOrURL : null);
+		}
+	}
+
+	/** Testable constructor: accepts ImageLoader interface instead of hardcoded Opener */
+	public ImagePlus(String pathOrURL, ImageLoader loader) {
+		ImagePlus imp = null;
+		boolean isURL = pathOrURL.indexOf("://") > 0;
+		if (isURL)
+			imp = loader.openURL(pathOrURL);
+		else
+			imp = loader.openImage(pathOrURL);
 		if (imp != null) {
 			loadFromImagePlus(imp, isURL ? pathOrURL : null);
 		}
