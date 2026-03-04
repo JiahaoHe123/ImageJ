@@ -468,7 +468,7 @@ public class Recorder extends PlugInFrame implements PlugIn, ActionListener, Ima
 		String m = instance.mode.getSelectedItem();
 		return m.equals(modes[BEANSHELL]) || m.equals(modes[JAVA]);
 	}
-	
+
 	public static void recordOption(String key, String value) {
 		if (key==null) return;
 		key = fixString(key);
@@ -500,7 +500,7 @@ public class Recorder extends PlugInFrame implements PlugIn, ActionListener, Ima
 		if (openingLut && imp!=null && !imp.getTitle().endsWith(".lut"))
 			textArea.append("imp.setLut(lut);\n");
 	}
-	
+
 	public static void recordPath(String key, String path) {
 		if (key==null || !recordPath) {
 			recordPath = true;
