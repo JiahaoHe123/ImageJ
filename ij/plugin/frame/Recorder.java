@@ -46,6 +46,7 @@ public class Recorder extends PlugInFrame implements PlugIn, ActionListener, Ima
 		this(true);	
 	}
 
+	//NOT_CREATED->IDLE
 	public Recorder(boolean showFrame) {
 		super("Recorder");
 		if (instance!=null) {
@@ -148,6 +149,7 @@ public class Recorder extends PlugInFrame implements PlugIn, ActionListener, Ima
 	/** Starts recording a command. Does nothing if the recorder is
 		not open or the command being recorded has called IJ.run(). 
 	*/
+	//IDLE → RECORDING_COMMAND
 	public static void setCommand(String command) {
 		String threadName = Thread.currentThread().getName();
 		boolean isMacro = threadName.startsWith("Run$_");
@@ -354,6 +356,7 @@ public class Recorder extends PlugInFrame implements PlugIn, ActionListener, Ima
 			textArea.append(str);
 	}
 
+	//any->idle
 	/** Prevents recording the dialogs (GenericDialog, File Open/Save dialog)
 	 *  for the command recently started */
 	public static void disableCommandRecording() {
@@ -468,7 +471,8 @@ public class Recorder extends PlugInFrame implements PlugIn, ActionListener, Ima
 		String m = instance.mode.getSelectedItem();
 		return m.equals(modes[BEANSHELL]) || m.equals(modes[JAVA]);
 	}
-	
+
+	//RECORDING_COMMAND → BUILDING_OPTIONS
 	public static void recordOption(String key, String value) {
 		if (key==null) return;
 		key = fixString(key);
@@ -500,7 +504,8 @@ public class Recorder extends PlugInFrame implements PlugIn, ActionListener, Ima
 		if (openingLut && imp!=null && !imp.getTitle().endsWith(".lut"))
 			textArea.append("imp.setLut(lut);\n");
 	}
-	
+
+	//RECORDING_COMMAND → BUILDING_OPTIONS
 	public static void recordPath(String key, String path) {
 		if (key==null || !recordPath) {
 			recordPath = true;
@@ -517,6 +522,7 @@ public class Recorder extends PlugInFrame implements PlugIn, ActionListener, Ima
 		else
 			commandOptions += " "+key+"="+path;
 	}
+
 
 	public static void recordOption(String key) {
 		if (key==null) return;
@@ -555,6 +561,7 @@ public class Recorder extends PlugInFrame implements PlugIn, ActionListener, Ima
 		return key;
 	}
 
+	//any-> idle
 	/** Writes the current command and options to the Recorder window. */
 	public static void saveCommand() {
 		String name = commandName;
