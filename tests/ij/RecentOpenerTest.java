@@ -2,6 +2,9 @@ package ij;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.awt.Menu;
 import java.awt.MenuItem;
@@ -10,7 +13,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for the testable design of {@link RecentOpener}: runWith(OpenerService, RecentMenuProvider).
- * Uses stubs (simple implementations that record or supply data) so that no real file I/O or UI is used.
+ * Uses stubs and mocks so that no real file I/O or AWT (Menu/MenuItem) is used — safe for headless CI.
  */
 public class RecentOpenerTest {
 
@@ -24,27 +27,16 @@ public class RecentOpenerTest {
 		}
 	}
 
-	/** Stub menu provider that returns a real AWT menu (needed for getItemCount/getItem/getLabel/remove/insert). */
-	private static class StubRecentMenuProvider implements RecentOpener.RecentMenuProvider {
-		private final Menu menu;
-
-		StubRecentMenuProvider(Menu menu) {
-			this.menu = menu;
-		}
-
-		@Override
-		public Menu getOpenRecentMenu() {
-			return menu;
-		}
-	}
-
 	@Test
 	public void runWithCallsOpenerWithPath() {
 		String path = "test.tif";
 		StubOpenerService stubOpener = new StubOpenerService();
-		Menu menu = new Menu();
-		menu.add(new MenuItem(path));
-		RecentOpener.RecentMenuProvider stubProvider = new StubRecentMenuProvider(menu);
+		Menu menu = mock(Menu.class);
+		MenuItem item = mock(MenuItem.class);
+		when(menu.getItemCount()).thenReturn(1);
+		when(menu.getItem(0)).thenReturn(item);
+		when(item.getLabel()).thenReturn(path);
+		RecentOpener.RecentMenuProvider stubProvider = () -> menu;
 
 		RecentOpener ro = new RecentOpener(path, true);
 		ro.runWith(stubOpener, stubProvider);
@@ -57,17 +49,21 @@ public class RecentOpenerTest {
 	public void runWithMovesPathToTopWhenNotAlreadyFirst() {
 		String path = "second.tif";
 		StubOpenerService stubOpener = new StubOpenerService();
-		Menu menu = new Menu();
-		menu.add(new MenuItem("first.tif"));
-		menu.add(new MenuItem(path));
-		RecentOpener.RecentMenuProvider stubProvider = new StubRecentMenuProvider(menu);
+		Menu menu = mock(Menu.class);
+		MenuItem itemFirst = mock(MenuItem.class);
+		MenuItem itemSecond = mock(MenuItem.class);
+		when(menu.getItemCount()).thenReturn(2);
+		when(menu.getItem(0)).thenReturn(itemFirst);
+		when(menu.getItem(1)).thenReturn(itemSecond);
+		when(itemFirst.getLabel()).thenReturn("first.tif");
+		when(itemSecond.getLabel()).thenReturn(path);
+		RecentOpener.RecentMenuProvider stubProvider = () -> menu;
 
 		RecentOpener ro = new RecentOpener(path, true);
 		ro.runWith(stubOpener, stubProvider);
 
 		assertEquals(path, stubOpener.lastPath);
-		assertEquals(2, menu.getItemCount());
-		assertEquals(path, menu.getItem(0).getLabel());
-		assertEquals("first.tif", menu.getItem(1).getLabel());
+		verify(menu).remove(1);
+		verify(menu).insert(itemSecond, 0);
 	}
 }
